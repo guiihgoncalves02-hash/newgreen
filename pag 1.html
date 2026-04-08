@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Green - Derreta Gordura Localizada</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#050505', 'bg-light': '#0a0a0a', card: '#111111', border: '#1f1f1f',
+                        accent: '#00ff88', 'accent-dark': '#00cc6a', fg: '#ffffff', muted: '#737373',
+                        danger: '#ff3b3b', gold: '#ffd700',
+                    },
+                    fontFamily: { display: ['Bebas Neue', 'sans-serif'], body: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: #ffffff; overflow-x: hidden; }
+        body::after { content: ''; position: fixed; inset: 0; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #00ff88; border-radius: 4px; }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,136,0.3), 0 0 40px rgba(0,255,136,0.1); } 50% { box-shadow: 0 0 30px rgba(0,255,136,0.5), 0 0 60px rgba(0,255,136,0.2); } }
+        @keyframes badge-bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .animate-badge { animation: badge-bounce 2s ease-in-out infinite; }
+        
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-left { opacity: 0; transform: translateX(-50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-left.active { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-right.active { opacity: 1; transform: translateX(0); }
+        .reveal-scale { opacity: 0; transform: scale(0.9); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-scale.active { opacity: 1; transform: scale(1); }
+        
+        .stagger-children > * { opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .stagger-children.active > *:nth-child(1) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .stagger-children.active > *:nth-child(2) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+        .stagger-children.active > *:nth-child(3) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+        .stagger-children.active > *:nth-child(4) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+        .stagger-children.active > *:nth-child(5) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+        .stagger-children.active > *:nth-child(6) { transition-delay: 0.6s; opacity: 1; transform: translateY(0); }
+        
+        .btn-cta { position: relative; background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%); overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .btn-cta::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transform: translateX(-100%); transition: transform 0.6s; }
+        .btn-cta:hover::before { transform: translateX(100%); }
+        .btn-cta:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 40px rgba(0,255,136,0.4), 0 0 80px rgba(0,255,136,0.2); }
+        .btn-cta:active { transform: translateY(0) scale(0.98); }
+        
+        .price-old { position: relative; color: #ff3b3b; }
+        .price-old::after { content: ''; position: absolute; left: -5%; right: -5%; top: 50%; height: 3px; background: #ff3b3b; transform: rotate(-5deg); }
+        
+        .urgency-pulse { position: relative; }
+        .urgency-pulse::before { content: ''; position: absolute; inset: -4px; border-radius: inherit; border: 2px solid currentColor; animation: pulse-glow 1.5s ease-out infinite; pointer-events: none; }
+        
+        .hero-bg { background: radial-gradient(ellipse 80% 60% at 50% -30%, rgba(0,255,136,0.15), transparent), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0,255,136,0.08), transparent), linear-gradient(180deg, #050505 0%, #080808 100%); }
+        
+        .card-hover { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(255,255,255,0.05); }
+        .card-hover:hover { transform: translateY(-10px); border-color: rgba(0,255,136,0.3); box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,255,136,0.1); }
+        
+        .whatsapp-btn { position: fixed; bottom: 20px; right: 20px; z-index: 1000; transition: all 0.3s ease; }
+        .whatsapp-btn:hover { transform: scale(1.1); }
+        .whatsapp-btn::before { content: ''; position: absolute; inset: -4px; background: #25D366; border-radius: 50%; z-index: -1; animation: pulse-glow 1.5s ease-out infinite; }
+        
+        .counter-box { background: linear-gradient(145deg, #111111 0%, #0a0a0a 100%); border: 1px solid rgba(0,255,136,0.2); position: relative; overflow: hidden; }
+        .counter-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,136,0.5), transparent); }
+        
+        .testimonial-card { background: linear-gradient(145deg, #111111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.05); transition: all 0.4s ease; }
+        .testimonial-card:hover { border-color: rgba(0,255,136,0.2); transform: translateY(-5px); }
+        
+        .plan-card { background: linear-gradient(145deg, #111111 0%, #0a0a0a 100%); border: 2px solid rgba(255,255,255,0.1); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; }
+        .plan-card:hover { border-color: rgba(0,255,136,0.3); transform: translateY(-5px); }
+        .plan-card.best-value { border-color: #00ff88; box-shadow: 0 0 30px rgba(0,255,136,0.2); }
+        .plan-card.best-value::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ff88, #00cc6a); }
+        
+        .product-bottle { position: relative; filter: drop-shadow(0 0 60px rgba(0,255,136,0.4)); }
+        .text-glow { text-shadow: 0 0 40px rgba(0,255,136,0.5), 0 0 80px rgba(0,255,136,0.3); }
+        
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- HERO -->
+    <section class="hero-bg min-h-screen relative overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+        </div>
+        <div class="absolute inset-0 opacity-30" aria-hidden="true">
+            <div class="h-full w-full" style="background-image: linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px); background-size: 50px 50px;"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 py-8 md:py-12 relative z-10">
+            <!-- Urgency Badge -->
+            <div class="text-center mb-8 reveal">
+                <div class="inline-flex items-center gap-2 bg-danger/20 border border-danger/30 px-4 py-2 rounded-full urgency-pulse text-danger">
+                    <span class="w-2 h-2 bg-danger rounded-full animate-pulse"></span>
+                    <span class="font-semibold text-sm md:text-base">ATENÇÃO: Restam apenas <span id="hero-stock" class="font-bold">23</span> unidades!</span>
+                </div>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center min-h-[85vh]">
+                <!-- Content -->
+                <div class="text-center lg:text-left order-2 lg:order-1">
+                    <p class="text-accent font-semibold tracking-[0.2em] uppercase mb-3 text-sm reveal">Descubra o Segredo das Celebridades</p>
+                    
+                    <h1 class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.9] mb-6 reveal" style="transition-delay: 0.1s;">
+                        <span class="text-white">DERRETA</span><br>
+                        <span class="text-accent text-glow">ATÉ 5KG</span><br>
+                        <span class="text-white">EM 30 DIAS</span>
+                    </h1>
+                    
+                    <p class="text-xl md:text-2xl text-white/80 mb-4 reveal" style="transition-delay: 0.2s;">
+                        <strong class="text-accent">Sem dieta maluca.</strong> <strong class="text-accent">Sem academia.</strong> <strong class="text-accent">Sem passar fome.</strong>
+                    </p>
+                    
+                    <p class="text-muted text-lg mb-8 max-w-xl mx-auto lg:mx-0 reveal" style="transition-delay: 0.3s;">
+                        Fórmula exclusiva com ingredientes naturais que <span class="text-white font-semibold">ativa seu metabolismo em apenas 3 dias</span> e elimina gordura localizada mesmo enquanto você dorme.
+                    </p>
+                    
+                    <!-- Social proof -->
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-8 reveal" style="transition-delay: 0.4s;">
+                        <div class="flex items-center gap-2 bg-card px-3 py-2 rounded-lg border border-border">
+                            <div class="flex -space-x-2">
+                                <div class="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">M</div>
+                                <div class="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">R</div>
+                                <div class="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">A</div>
+                                <div class="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">+</div>
+                            </div>
+                            <span class="text-sm"><span class="text-accent font-bold">12.847</span> mulheres já emagreceram</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <div class="flex">
+                                <svg class="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                            <span class="text-sm text-muted">4.9/5</span>
+                        </div>
+                    </div>
+                    
+                    <div class="reveal" style="transition-delay: 0.5s;">
+                        <a href="https://wa.me/5511999999999?text=Quero%20emagrecer%20com%20New%20Green!" target="_blank" rel="noopener noreferrer" class="btn-cta inline-flex items-center justify-center gap-3 px-8 py-5 md:px-12 md:py-6 rounded-xl text-black font-bold text-lg md:text-xl uppercase tracking-wide animate-pulse-glow">
+                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            QUERO EMAGRECER AGORA
+                        </a>
+                        <p class="text-muted text-sm mt-4 flex items-center justify-center lg:justify-start gap-2">
+                            <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            Compra 100% segura | Garantia de 7 dias
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Product Image -->
+                <div class="order-1 lg:order-2 flex justify-center reveal-scale" style="transition-delay: 0.3s;">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-radial from-accent/30 via-accent/10 to-transparent blur-3xl transform scale-150"></div>
+                        <div class="relative animate-float">
+                            <!-- Single Bottle -->
+                            <div class="product-bottle w-56 h-80 md:w-72 md:h-96 relative">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <!-- Cap -->
+                                    <div class="w-14 h-7 bg-gradient-to-b from-emerald-600 to-emerald-700 rounded-t-xl mb-1 shadow-lg"></div>
+                                    <!-- Neck -->
+                                    <div class="w-9 h-8 bg-gradient-to-b from-emerald-500 to-emerald-600"></div>
+                                    <!-- Body -->
+                                    <div class="w-36 md:w-44 h-56 md:h-64 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700 rounded-3xl relative overflow-hidden shadow-2xl">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent"></div>
+                                        <div class="absolute top-4 left-2 w-1 h-full bg-gradient-to-b from-white/40 to-transparent"></div>
+                                        <!-- Label -->
+                                        <div class="absolute inset-3 top-6 bottom-6 bg-white rounded-xl flex flex-col items-center justify-center shadow-inner overflow-hidden">
+                                            <div class="text-emerald-600 font-display text-2xl md:text-3xl leading-none">NEW</div>
+                                            <div class="text-emerald-700 font-display text-3xl md:text-4xl leading-none -mt-1">GREEN</div>
+                                            <div class="w-12 h-0.5 bg-emerald-500 my-1.5"></div>
+                                            <div class="text-emerald-800 text-[10px] font-semibold text-center px-2">SUPLEMENTO NATURAL</div>
+                                            <div class="mt-2 text-[9px] text-emerald-600 font-medium">60 CÁPSULAS</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Badges -->
+                                <div class="absolute -top-2 -right-2 bg-danger text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-badge">-52% OFF</div>
+                                <div class="absolute bottom-8 -left-2 bg-accent text-black text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">100% NATURAL</div>
+                            </div>
+                        </div>
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-accent/10 rounded-full blur-2xl"></div>
+                        <div class="absolute -bottom-8 -left-8 w-24 h-24 bg-accent/5 rounded-full blur-xl"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="py-16 md:py-24 bg-bg-light relative overflow-hidden">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="font-display text-4xl md:text-5xl lg:text-6xl mb-8 reveal">
+                    VOCÊ JÁ TENTOU <span class="text-danger">TUDO</span> PARA EMAGRECER?
+                </h2>
+                <div class="grid md:grid-cols-3 gap-6 mb-12 stagger-children">
+                    <div class="bg-card p-6 rounded-2xl border border-danger/20">
+                        <div class="w-12 h-12 mx-auto mb-4 bg-danger/10 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                        <p class="text-muted">Dietas restritivas que dão fome e ansiedade</p>
+                    </div>
+                    <div class="bg-card p-6 rounded-2xl border border-danger/20">
+                        <div class="w-12 h-12 mx-auto mb-4 bg-danger/10 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                        <p class="text-muted">Academia todos os dias sem resultados</p>
+                    </div>
+                    <div class="bg-card p-6 rounded-2xl border border-danger/20">
+                        <div class="w-12 h-12 mx-auto mb-4 bg-danger/10 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                        <p class="text-muted">Remédios que prometem milagres e dão efeito sanfona</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-danger/10 via-danger/5 to-danger/10 border border-danger/20 rounded-2xl p-6 md:p-8 reveal">
+                    <p class="text-xl md:text-2xl text-white/90">
+                        <strong class="text-danger">PARE DE SOFRER!</strong> Você não precisa se torturar para ter o corpo dos seus sonhos. 
+                        <span class="text-accent font-semibold">New Green</span> foi criado para quem quer resultados reais, sem passar fome.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BENEFITS SECTION -->
+    <section class="py-16 md:py-24 bg-bg relative" id="beneficios">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <p class="text-accent font-semibold tracking-[0.2em] uppercase mb-2 reveal">Fórmula Revolucionária</p>
+                <h2 class="font-display text-4xl md:text-5xl lg:text-6xl reveal" style="transition-delay: 0.1s;">POR QUE <span class="text-accent">NEW GREEN</span> FUNCIONA?</h2>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-children">
+                <div class="card-hover bg-card p-6 rounded-2xl text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-accent/20 to-accent/5 rounded-2xl flex items-center justify-center border border-accent/20">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-white">MATA A FOME</h3>
+                    <p class="text-muted text-sm">Esqueça a vontade de beliscar o dia todo. Você vai comer menos sem sentir que está passando fome.</p>
+                </div>
+                
+                <div class="card-hover bg-card p-6 rounded-2xl text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-accent/20 to-accent/5 rounded-2xl flex items-center justify-center border border-accent/20">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-white">ACORDA O METABOLISMO</h3>
+                    <p class="text-muted text-sm">Seu corpo vai virar uma máquina de queimar gordura, mesmo quando você estiver descansando.</p>
+                </div>
+                
+                <div class="card-hover bg-card p-6 rounded-2xl text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-accent/20 to-accent/5 rounded-2xl flex items-center justify-center border border-accent/20">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-white">DERRETE GORDURA LOCALIZADA</h3>
+                    <p class="text-muted text-sm">Aqueles pneuzinhos que não saem nem com reza? New Green ataca direto na gordura mais teimosa.</p>
+                </div>
+                
+                <div class="card-hover bg-card p-6 rounded-2xl text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-accent/20 to-accent/5 rounded-2xl flex items-center justify-center border border-accent/20">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-white">ENERGIA O DIA TODO</h3>
+                    <p class="text-muted text-sm">Adeus cansaço! Você vai ter disposição para trabalhar, cuidar da casa e ainda sobrar energia.</p>
+                </div>
+            </div>
+            
+            <div class="mt-12 bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border border-accent/20 rounded-2xl p-6 md:p-8 text-center reveal">
+                <p class="text-xl md:text-2xl"><strong class="text-accent">RESULTADOS VISÍVEIS EM 7 DIAS!</strong> <span class="text-white/80">Muitas clientes relatam que as roupas já ficam mais folgadas na primeira semana.</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT SECTION -->
+    <section class="py-16 md:py-24 bg-bg-light relative overflow-hidden" id="produto">
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="absolute top-1/3 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/3 right-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Content -->
+                <div>
+                    <p class="text-accent font-semibold tracking-[0.2em] uppercase mb-2 reveal-left">Ciência + Natureza</p>
+                    <h2 class="font-display text-4xl md:text-5xl lg:text-6xl mb-6 reveal-left" style="transition-delay: 0.1s;">INGREDIENTES <span class="text-accent">PODEROSOS</span></h2>
+                    <p class="text-white/70 text-lg mb-8 reveal-left" style="transition-delay: 0.2s;">Cada cápsula de New Green contém uma combinação sinérgica de ingredientes clinicamente estudados para acelerar seu metabolismo e controlar seu apetite naturalmente.</p>
+                    
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="bg-card p-4 rounded-xl border border-border reveal-left" style="transition-delay: 0.3s;">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <h4 class="font-bold text-white">Espirulina</h4>
+                            </div>
+                            <p class="text-muted text-sm">Superfood que dá saciedade prolongada e elimina toxinas.</p>
+                        </div>
+                        <div class="bg-card p-4 rounded-xl border border-border reveal-left" style="transition-delay: 0.4s;">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <h4 class="font-bold text-white">Psyllium</h4>
+                            </div>
+                            <p class="text-muted text-sm">Fibra que expande no estômago e mantém você satisfeito.</p>
+                        </div>
+                        <div class="bg-card p-4 rounded-xl border border-border reveal-left" style="transition-delay: 0.5s;">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <h4 class="font-bold text-white">Cromo</h4>
+                            </div>
+                            <p class="text-muted text-sm">Controla a vontade de doces e equilibra o açúcar.</p>
+                        </div>
+                        <div class="bg-card p-4 rounded-xl border border-border reveal-left" style="transition-delay: 0.6s;">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <h4 class="font-bold text-white">Cafeína Natural</h4>
+                            </div>
+                            <p class="text-muted text-sm">Acelera o metabolismo e dá energia extra.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- How it works -->
+                <div class="reveal-right">
+                    <div class="bg-card rounded-3xl p-6 md:p-8 border border-accent/10">
+                        <h3 class="font-display text-2xl md:text-3xl mb-6 text-center">COMO FUNCIONA</h3>
+                        <div class="space-y-6">
+                            <div class="flex gap-4 items-start">
+                                <div class="w-12 h-12 bg-accent rounded-xl flex items-center justify-center flex-shrink-0 font-display text-xl text-bg font-bold">1</div>
+                                <div>
+                                    <h4 class="font-semibold text-white mb-1">Tome 2 cápsulas por dia</h4>
+                                    <p class="text-muted text-sm">Idealmente 30 minutos antes do café da manhã com um copo de água.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <div class="w-12 h-12 bg-accent rounded-xl flex items-center justify-center flex-shrink-0 font-display text-xl text-bg font-bold">2</div>
+                                <div>
+                                    <h4 class="font-semibold text-white mb-1">Sinta a saciedade</h4>
+                                    <p class="text-muted text-sm">Em poucas horas você já vai perceber que não tem mais aquela vontade de beliscar.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <div class="w-12 h-12 bg-accent rounded-xl flex items-center justify-center flex-shrink-0 font-display text-xl text-bg font-bold">3</div>
+                                <div>
+                                    <h4 class="font-semibold text-white mb-1">Veja os resultados</h4>
+                                    <p class="text-muted text-sm">Na primeira semana as roupas ficam mais folgadas. Em um mês, o espelho mostra a transformação.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 p-4 bg-accent/10 rounded-xl border border-accent/20">
+                            <p class="text-center text-sm"><strong class="text-accent">IMPORTANTE:</strong> <span class="text-white/70">Para resultados ainda mais rápidos, combine com alimentação equilibrada e hidratação.</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="py-16 md:py-24 bg-bg relative" id="depoimentos">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-12">
+                <p class="text-accent font-semibold tracking-[0.2em] uppercase mb-2 reveal">Histórias Reais</p>
+                <h2 class="font-display text-4xl md:text-5xl lg:text-6xl reveal" style="transition-delay: 0.1s;">ELAS <span class="text-accent">CONSEGUIRAM!</span></h2>
+                <p class="text-muted mt-4 max-w-2xl mx-auto reveal" style="transition-delay: 0.2s;">Milhares de mulheres já transformaram seus corpos com New Green. Veja alguns resultados:</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-accent/30 to-accent/10 rounded-full flex items-center justify-center border-2 border-accent/30">
+                            <span class="font-display text-xl text-accent">MC</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-white">Maria Clara</p>
+                            <p class="text-muted text-sm">32 anos, São Paulo</p>
+                            <div class="flex gap-0.5 mt-1">
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-bg rounded-xl p-3 text-center border border-danger/20">
+                            <p class="text-danger text-xs mb-1">ANTES</p>
+                            <p class="font-bold text-xl text-danger">78 kg</p>
+                        </div>
+                        <div class="bg-accent/10 rounded-xl p-3 text-center border border-accent/30">
+                            <p class="text-accent text-xs mb-1">DEPOIS</p>
+                            <p class="font-bold text-xl text-accent">72 kg</p>
+                        </div>
+                    </div>
+                    <p class="text-white/70 text-sm mb-4">"Depois de ter meu filho, não conseguia voltar ao peso. Com New Green, perdi 6kg em 2 meses SEM fazer dieta! Meu marido não acreditou quando viu meu antes e depois."</p>
+                    <div class="flex items-center gap-2 text-accent text-sm font-semibold">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Perda de 6kg em 2 meses
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-accent/30 to-accent/10 rounded-full flex items-center justify-center border-2 border-accent/30">
+                            <span class="font-display text-xl text-accent">RS</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-white">Roberto Silva</p>
+                            <p class="text-muted text-sm">45 anos, Rio de Janeiro</p>
+                            <div class="flex gap-0.5 mt-1">
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-bg rounded-xl p-3 text-center border border-danger/20">
+                            <p class="text-danger text-xs mb-1">ANTES</p>
+                            <p class="font-bold text-xl text-danger">95 kg</p>
+                        </div>
+                        <div class="bg-accent/10 rounded-xl p-3 text-center border border-accent/30">
+                            <p class="text-accent text-xs mb-1">DEPOIS</p>
+                            <p class="font-bold text-xl text-accent">87 kg</p>
+                        </div>
+                    </div>
+                    <p class="text-white/70 text-sm mb-4">"Tentei vários suplementos e nenhum funcionava. New Green foi diferente - em 45 dias já tinha perdido 8kg! A barriga diminuiu e sinto mais energia."</p>
+                    <div class="flex items-center gap-2 text-accent text-sm font-semibold">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Perda de 8kg em 45 dias
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-accent/30 to-accent/10 rounded-full flex items-center justify-center border-2 border-accent/30">
+                            <span class="font-display text-xl text-accent">AF</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-white">Amanda Ferreira</p>
+                            <p class="text-muted text-sm">28 anos, Belo Horizonte</p>
+                            <div class="flex gap-0.5 mt-1">
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-3 h-3 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-bg rounded-xl p-3 text-center border border-danger/20">
+                            <p class="text-danger text-xs mb-1">ANTES</p>
+                            <p class="font-bold text-xl text-danger">70 kg</p>
+                        </div>
+                        <div class="bg-accent/10 rounded-xl p-3 text-center border border-accent/30">
+                            <p class="text-accent text-xs mb-1">DEPOIS</p>
+                            <p class="font-bold text-xl text-accent">63 kg</p>
+                        </div>
+                    </div>
+                    <p class="text-white/70 text-sm mb-4">"Depois da gravidez achei que nunca mais ia voltar ao meu peso. New Green me ajudou a perder 7kg em 3 meses! Recomendo para todas as mães!"</p>
+                    <div class="flex items-center gap-2 text-accent text-sm font-semibold">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Perda de 7kg em 3 meses
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Social proof counter -->
+            <div class="mt-12 text-center reveal">
+                <div class="inline-flex items-center gap-6 bg-card px-8 py-4 rounded-full border border-accent/20">
+                    <div class="text-center">
+                        <p class="font-display text-3xl md:text-4xl text-accent">12.847</p>
+                        <p class="text-muted text-sm">Clientes Satisfeitas</p>
+                    </div>
+                    <div class="w-px h-10 bg-border"></div>
+                    <div class="text-center">
+                        <p class="font-display text-3xl md:text-4xl text-accent">4.9</p>
+                        <p class="text-muted text-sm">Avaliação Média</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OFFER SECTION -->
+    <section class="py-16 md:py-24 bg-bg-light relative overflow-hidden" id="oferta">
+        <div class="absolute inset-0" aria-hidden="true">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-accent/10 via-accent/5 to-transparent"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-5xl mx-auto">
+                <!-- Header -->
+                <div class="text-center mb-10">
+                    <p class="text-danger font-semibold tracking-[0.2em] uppercase mb-2 reveal">Atenção Especial</p>
+                    <h2 class="font-display text-4xl md:text-5xl lg:text-6xl reveal" style="transition-delay: 0.1s;">ESCOLHA SEU <span class="text-accent">TRATAMENTO</span></h2>
+                    <p class="text-white/60 mt-4 reveal" style="transition-delay: 0.2s;">Quanto mais frascos, maior o desconto. Garanta seu tratamento completo!</p>
+                </div>
+                
+                <!-- Countdown Timer -->
+                <div class="mb-8 reveal" style="transition-delay: 0.3s;">
+                    <p class="text-center text-white/80 mb-3 font-semibold">Esta oferta expira em:</p>
+                    <div class="flex justify-center gap-3" id="countdown">
+                        <div class="counter-box p-4 md:p-5 rounded-xl text-center min-w-[75px]">
+                            <span class="font-display text-3xl md:text-4xl text-white" id="hours">02</span>
+                            <p class="text-muted text-xs mt-1">Horas</p>
+                        </div>
+                        <div class="counter-box p-4 md:p-5 rounded-xl text-center min-w-[75px]">
+                            <span class="font-display text-3xl md:text-4xl text-white" id="minutes">47</span>
+                            <p class="text-muted text-xs mt-1">Minutos</p>
+                        </div>
+                        <div class="counter-box p-4 md:p-5 rounded-xl text-center min-w-[75px]">
+                            <span class="font-display text-3xl md:text-4xl text-accent" id="seconds">33</span>
+                            <p class="text-muted text-xs mt-1">Segundos</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Plans -->
+                <div class="grid md:grid-cols-3 gap-6 mb-10 stagger-children">
+                    <!-- Plan 1: 1 Frasco -->
+                    <div class="plan-card rounded-2xl p-6 text-center">
+                        <div class="mb-4">
+                            <!-- Single Bottle -->
+                            <div class="w-32 h-44 mx-auto relative product-bottle">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <div class="w-8 h-4 bg-gradient-to-b from-emerald-600 to-emerald-700 rounded-t-lg"></div>
+                                    <div class="w-5 h-3 bg-emerald-500"></div>
+                                    <div class="w-20 h-28 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700 rounded-xl">
+                                        <div class="h-full flex flex-col items-center justify-center p-1">
+                                            <div class="text-white font-display text-xs">NEW</div>
+                                            <div class="text-white font-display text-sm -mt-0.5">GREEN</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg mb-1 text-white">1 Frasco</h3>
+                        <p class="text-muted text-sm mb-4">Tratamento para 30 dias</p>
+                        
+                        <div class="mb-4">
+                            <p class="text-muted text-sm">De <span class="price-old font-semibold">R$ 250,00</span></p>
+                            <div class="flex items-center justify-center gap-1 mt-1">
+                                <span class="text-accent text-lg">R$</span>
+                                <span class="font-display text-4xl text-accent text-glow">180</span>
+                            </div>
+                            <p class="text-muted text-xs mt-1">ou 12x de R$ 18,00</p>
+                        </div>
+                        
+                        <a href="https://wa.me/5511999999999?text=Quero%201%20frasco%20de%20New%20Green!" target="_blank" rel="noopener noreferrer" class="inline-block w-full py-3 px-4 rounded-lg bg-white/10 border border-white/20 text-white font-semibold transition-all hover:bg-white/20">
+                            COMPRAR AGORA
+                        </a>
+                    </div>
+                    
+                    <!-- Plan 2: 2 Frascos -->
+                    <div class="plan-card rounded-2xl p-6 text-center">
+                        <div class="mb-4">
+                            <!-- Two Bottles -->
+                            <div class="flex justify-center gap-2">
+                                <div class="w-24 h-36 relative product-bottle">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center scale-75">
+                                        <div class="w-8 h-4 bg-gradient-to-b from-emerald-600 to-emerald-700 rounded-t-lg"></div>
+                                        <div class="w-5 h-3 bg-emerald-500"></div>
+                                        <div class="w-20 h-24 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700 rounded-xl"></div>
+                                    </div>
+                                </div>
+                                <div class="w-24 h-36 relative product-bottle">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center scale-75">
+                                        <div class="w-8 h-4 bg-gradient-to-b from-emerald-600 to-emerald-700 rounded-t-lg"></div>
+                                        <div class="w-5 h-3 bg-emerald-500"></div>
+                                        <div class="w-20 h-24 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700 rounded-xl"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg mb-1 text-white">2 Frascos</h3>
+                        <p class="text-muted text-sm mb-4">Tratamento para 60 dias</p>
+                        
+                        <div class="mb-4">
+                            <p class="text-muted text-sm">De <span class="price-old font-semibold">R$ 500,00</span></p>
+                            <div class="flex items-center justify-center gap-1 mt-1">
+                                <span class="text-accent text-lg">R$</span>
+                                <span class="font-display text-4xl text-accent text-glow">297</span>
+                            </div>
+                            <p class="text-white/50 text-xs mt-1">R$ 148,50 cada frasco</p>
+                            <p class="text-muted text-xs">ou 12x de R$ 29,70</p>
+                        </div>
+                        
+                        <a href="https://wa.me/5511999999999?text=Quero%202%20frascos%20de%20New%20Green!" target="_blank" rel="noopener noreferrer" class="inline-block w-full py-3 px-4 rounded-lg bg-white/10 border border-white/20 text-white font-semibold transition-all hover:bg-white/20">
+                            COMPRAR AGORA
+                        </a>
+                    </div>
+                    
+                    <!-- Plan 3: 3 Frascos - BEST VALUE -->
+                    <div class="plan-card best-value rounded-2xl p-6 text-center relative">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-danger text-white text-xs font-bold px-4 py-1 rounded-full animate-badge">
+                            MAIS VENDIDO
+                        </div>
+                        
+                        <div class="mb-4">
+                            <!-- Three Bottles -->
+                            <div class="flex justify-center gap-1">
+                                <div class="w-20 h-32 relative product-bottle">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center scale-75">
+                                        <div class="w-8 h-4 bg-gradient-to-b from-emerald-600 to-emerald-700 rounded-t-lg"></div>
+                                        <div class="w-5 h-3 bg-emerald-500"></div>
+                                        <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700 rounded-xl"></div>
+                                    </div>
+                                </div>
+                                <div class="w-20 h-32 relative product-bottle">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center scale-75">
+                                        <div class="w-8 h-4 bg-gradient-to-b from-emerald-600 to-emerald-700 rounded-t-lg"></div>
+                                        <div class="w-5 h-3 bg-emerald-500"></div>
+                                        <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700 rounded-xl"></div>
+                                    </div>
+                                </div>
+                                <div class="w-20 h-32 relative product-bottle">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center scale-75">
+                                        <div class="w-8 h-4 bg-gradient-to-b from-emerald-600 to-emerald-700 rounded-t-lg"></div>
+                                        <div class="w-5 h-3 bg-emerald-500"></div>
+                                        <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-700 rounded-xl"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg mb-1 text-white">3 Frascos</h3>
+                        <p class="text-muted text-sm mb-4">Tratamento para 90 dias</p>
+                        
+                        <div class="mb-4">
+                            <p class="text-muted text-sm">De <span class="price-old font-semibold">R$ 750,00</span></p>
+                            <div class="flex items-center justify-center gap-1 mt-1">
+                                <span class="text-accent text-lg">R$</span>
+                                <span class="font-display text-5xl text-accent text-glow">360</span>
+                            </div>
+                            <p class="text-accent text-sm font-semibold mt-1">R$ 120,00 cada frasco</p>
+                            <p class="text-muted text-xs">ou 12x de R$ 36,00</p>
+                        </div>
+                        
+                        <p class="text-white/50 text-xs mb-3 flex items-center justify-center gap-1">
+                            <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+                            FRETE GRÁTIS
+                        </p>
+                        
+                        <a href="https://wa.me/5511999999999?text=Quero%20o%20tratamento%20de%203%20frascos%20de%20New%20Green!" target="_blank" rel="noopener noreferrer" class="btn-cta inline-block w-full py-4 px-4 rounded-lg text-black font-bold text-lg">
+                            COMPRAR COM DESCONTO
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Scacity alert -->
+                <div class="bg-danger/10 border border-danger/30 rounded-xl p-4 text-center reveal">
+                    <p class="text-danger font-semibold flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                        <span id="offer-stock">Atenção: Restam apenas 23 unidades!</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GUARANTEE -->
+    <section class="py-12 md:py-16 bg-bg" id="garantia">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="bg-card rounded-3xl p-8 md:p-12 border border-accent/20 text-center reveal-scale">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-accent/10 rounded-full flex items-center justify-center border-2 border-accent/30">
+                        <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h3 class="font-display text-3xl md:text-4xl mb-4 text-white">GARANTIA <span class="text-accent">INCONDICIONAL</span></h3>
+                    <p class="text-white/70 mb-4 text-lg">Você tem <strong class="text-accent">7 dias</strong> para testar New Green. Se não ficar 100% satisfeita, devolvemos seu dinheiro integralmente. Sem perguntas, sem burocracia.</p>
+                    <p class="text-accent font-semibold text-lg">RISCO ZERO PARA VOCÊ!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16 md:py-24 bg-bg-light" id="faq">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-12">
+                    <p class="text-accent font-semibold tracking-[0.2em] uppercase mb-2 reveal">Tire Suas Dúvidas</p>
+                    <h2 class="font-display text-4xl md:text-5xl reveal" style="transition-delay: 0.1s;">PERGUNTAS <span class="text-accent">FREQUENTES</span></h2>
+                </div>
+                <div class="space-y-4 stagger-children" id="faq-items"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="py-16 md:py-24 bg-bg relative overflow-hidden">
+        <div class="absolute inset-0" aria-hidden="true">
+            <div class="absolute inset-0 bg-gradient-to-t from-accent/5 to-transparent"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-accent/10 to-transparent blur-3xl"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="font-display text-4xl md:text-5xl lg:text-6xl mb-6 reveal">PRONTA PARA <span class="text-accent">TRANSFORMAR</span> SEU CORPO?</h2>
+                <p class="text-white/70 text-lg mb-8 reveal" style="transition-delay: 0.1s;">Não deixe para depois. Cada dia que passa é uma chance a menos de conquistar o corpo dos seus sonhos. <strong class="text-white">Garanta seu New Green agora!</strong></p>
+                <a href="https://wa.me/5511999999999?text=Quero%20emagrecer%20com%20New%20Green!" target="_blank" rel="noopener noreferrer" class="btn-cta inline-flex items-center justify-center gap-3 px-12 py-6 rounded-xl text-black font-bold text-xl uppercase tracking-wide reveal" style="transition-delay: 0.2s;">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    QUERO EMAGRECER AGORA
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-8 bg-bg border-t border-border">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p class="font-display text-2xl text-accent mb-4">New Green</p>
+                <div class="bg-card rounded-xl p-4 mb-6 max-w-2xl mx-auto border border-border">
+                    <p class="text-white/50 text-sm leading-relaxed"><strong class="text-white/70">Aviso Legal:</strong> Este produto não é um medicamento e não substitui orientação médica. Os resultados podem variar de pessoa para pessoa. Antes de iniciar qualquer suplementação, consulte um profissional de saúde. As imagens e depoimentos são ilustrativos e os resultados não são garantidos. *Condições aplicam-se à garantia de 7 dias.</p>
+                </div>
+                <p class="text-white/30 text-sm mb-2">© 2024 New Green. Todos os direitos reservados.</p>
+                <p class="text-white/20 text-xs">CNPJ: 00.000.000/0001-00 | Endereço: Rua Exemplo, 123 - São Paulo/SP</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING WHATSAPP -->
+    <a href="https://wa.me/5511999999999?text=Olá! Tenho interesse no New Green" target="_blank" rel="noopener noreferrer" class="whatsapp-btn w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg" aria-label="Contato via WhatsApp">
+        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+
+    <script>
+        // FAQ Data
+        const faqData = [
+            { question: "New Green tem alguma contraindicação?", answer: "New Green é feito com ingredientes naturais e geralmente bem tolerado. Porém, gestantes, nutrizes, crianças e pessoas com condições pré-existentes devem consultar um médico antes de iniciar o uso." },
+            { question: "Em quanto tempo vou ver resultados?", answer: "Muitas clientes relatam resultados visíveis já na primeira semana, como roupas mais folgadas. Para resultados mais significativos, recomendamos o uso continuado por pelo menos 30 dias." },
+            { question: "Preciso fazer dieta para o produto funcionar?", answer: "Não! New Green funciona independente de dieta, mas para resultados mais rápidos e duradouros, recomendamos manter uma alimentação equilibrada e hidratação adequada." },
+            { question: "Como devo tomar New Green?", answer: "Tome 2 cápsulas por dia, idealmente 30 minutos antes do café da manhã com um copo de água. Não exceda a dosagem recomendada." },
+            { question: "O produto é aprovado pela ANVISA?", answer: "Sim! New Green é produzido em laboratório certificado e segue todas as normas da ANVISA para suplementos alimentares." },
+            { question: "O frete é grátis mesmo?", answer: "Sim! Para compras de 3 frascos, oferecemos frete grátis para todo o Brasil. Aproveite!" }
+        ];
+
+        // Initialize FAQ
+        function initFAQ() {
+            const container = document.getElementById('faq-items');
+            if (!container) return;
+            
+            faqData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'bg-card rounded-xl border border-border overflow-hidden';
+                div.innerHTML = `
+                    <button class="w-full px-6 py-4 text-left flex items-center justify-between font-semibold text-white hover:bg-bg-light transition-colors" onclick="toggleFAQ(${index})">
+                        <span>${item.question}</span>
+                        <svg class="w-5 h-5 text-accent transform transition-transform faq-icon-${index}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-answer-${index} max-h-0 overflow-hidden transition-all duration-300">
+                        <p class="px-6 pb-4 text-white/60">${item.answer}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleFAQ(index) {
+            const answer = document.querySelector(`.faq-answer-${index}`);
+            const icon = document.querySelector(`.faq-icon-${index}`);
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Countdown Timer
+        function initCountdown() {
+            let endTime = sessionStorage.getItem('countdownEnd');
+            if (!endTime) {
+                endTime = new Date().getTime() + (3 * 60 * 60 * 1000);
+                sessionStorage.setItem('countdownEnd', endTime);
+            }
+            
+            function update() {
+                const now = new Date().getTime();
+                let distance = parseInt(endTime) - now;
+                if (distance < 0) {
+                    endTime = new Date().getTime() + (3 * 60 * 60 * 1000);
+                    sessionStorage.setItem('countdownEnd', endTime);
+                    distance = parseInt(endTime) - now;
+                }
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                const hoursEl = document.getElementById('hours');
+                const minutesEl = document.getElementById('minutes');
+                const secondsEl = document.getElementById('seconds');
+                
+                if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+                if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+                if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        // Stock counter
+        function initStock() {
+            let stock = parseInt(sessionStorage.getItem('stockCount') || '23');
+            document.getElementById('hero-stock').textContent = stock;
+            document.getElementById('offer-stock').textContent = `Atenção: Restam apenas ${stock} unidades!`;
+            
+            setInterval(() => {
+                if (stock > 5 && Math.random() > 0.6) {
+                    stock--;
+                    sessionStorage.setItem('stockCount', stock.toString());
+                    document.getElementById('hero-stock').textContent = stock;
+                    document.getElementById('offer-stock').textContent = `Atenção: Restam apenas ${stock} unidades!`;
+                }
+            }, 45000 + Math.random() * 30000);
+        }
+
+        // Scroll Reveal
+        function initScrollReveal() {
+            const elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            elements.forEach(el => observer.observe(el));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initFAQ();
+            initCountdown();
+            initStock();
+            initScrollReveal();
+        });
+    </script>
+</body>
+</html>
